@@ -150,15 +150,21 @@ describe("Order repository test", () => {
       product2.id,
       3
     );
+    order.addItem(ordemItem2);
+
+    const customer2 = new Customer("999", "Customer 1");
+    const address2 = new Address("Street 1", 1, "Zipcode 1", "City 1");
+    customer2.changeAddress(address2);
+    await customerRepository.create(customer2);
+    order.changeCustomer(customer2.id);
     
-    orderRepository.update(order);
+    await orderRepository.update(order);
 
-    const orderFromRepo = await orderRepository.find(order.id);
-
-  
+    const orderFromRepo = await orderRepository.find(order.id);  
 
     expect(order.id).toEqual(orderFromRepo.id);
     expect(order.items.length).toEqual(orderFromRepo.items.length);
+    expect(order.customerId).toEqual(orderFromRepo.customerId);
   });
 
   it("should find all", async () => {

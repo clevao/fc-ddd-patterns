@@ -7,23 +7,40 @@ import OrderModel from "./order.model";
 
 export default class OrderRepository implements OrderRepositoryInterface {
   
-  async update(entity: Order): Promise<void> {
+  async update(order: Order): Promise<void> {
 
     const filter = {
       where: {
-        id: entity.id
+        id: order.id
       }
     };
 
     let orderDB = await OrderModel.findOne(filter);
 
     const orderToUpdate = {
-      id: entity.id,
-      customer_id: '999',
-      total: entity.total(),      
+      customer_id: order.customerId,
+      total: order.total()
     };
 
     if(orderDB) {
+
+      for(const i of order.items) {
+        await OrderItemModel.destroy( 
+          {
+            where: {
+              id: i.id
+            }
+          });
+        await OrderItemModel.create({
+            id: i.id,
+            name: i.name,
+            price: i.price,
+            product_id: i.productId,
+            quantity: i.quantity,
+            order_id: order.id
+          }
+        );
+      }
       
       await OrderModel.update(
         orderToUpdate,

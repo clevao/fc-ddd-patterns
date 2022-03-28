@@ -51,4 +51,8 @@ export default class Order {
     this._items.push(item);
     this.validate()
   }
+
+  changeCustomer(id: string): void {
+    this._customerId = id;
+  }
 }
